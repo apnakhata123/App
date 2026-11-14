@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AskPaper — Blue &amp; White AI Study Assistant</title>
+  <style>
+    :root {
+      --blue-primary: #0b57d0;
+      --blue-dark: #0842a0;
+      --blue-accent: #1a73e8;
+      --blue-ice: #eaf2ff;
+      --blue-container: #d3e3fd;
+      --blue-border: #cfe0fa;
+      --white: #ffffff;
+      --bg: #f6faff;
+      --ink: #0a1d3d;
+      --muted: #425877;
+      --danger: #b3261e;
+      --danger-bg: #fce8e6;
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--blue-primary), var(--blue-accent));
+      color: var(--white);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      box-shadow: 0 2px 10px rgba(11, 87, 208, 0.2);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+
+    .brand-badge {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.2);
+      display: grid;
+      place-items: center;
+      font-size: 1.1rem;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .pill-btn {
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.16);
+      color: var(--white);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    main {
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 16px 14px 86px;
+      flex: 1;
+    }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--blue-border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(11, 87, 208, 0.05);
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--blue-primary), var(--blue-accent));
+      color: var(--white);
+      border: none;
+    }
+    .hero h1 { margin: 0 0 6px; font-size: 1.25rem; }
+    .hero p { margin: 0; font-size: 0.9rem; opacity: 0.92; }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    textarea, input[type="text"], input[type="password"], select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid var(--blue-border);
+      background: #fbfdff;
+      color: var(--ink);
+      font-size: 0.95rem;
+      font-family: inherit;
+      outline: none;
+    }
+
+    textarea:focus, input:focus, select:focus {
+      border-color: var(--blue-primary);
+      background: var(--white);
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .chip-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      margin-bottom: 10px;
+    }
+
+    .chip {
+      border: 1px solid var(--blue-border);
+      background: var(--white);
+      color: var(--muted);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .chip.active {
+      background: var(--blue-primary);
+      color: var(--white);
+      border-color: var(--blue-primary);
+    }
+
+    .btn-primary {
+      width: 100%;
+      border: none;
+      background: var(--blue-primary);
+      color: var(--white);
+      padding: 13px 16px;
+      border-radius: 14px;
+      font-size: 0.98rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .btn-outline {
+      border: 1px solid var(--blue-border);
+      background: var(--blue-ice);
+      color: var(--blue-primary);
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-voice {
+      border: none;
+      background: var(--blue-container);
+      color: var(--blue-dark);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-voice.playing {
+      background: var(--blue-primary);
+      color: var(--white);
+    }
+
+    .answer-box {
+      white-space: pre-wrap;
+      line-height: 1.55;
+      font-size: 0.96rem;
+    }
+
+    .error-box {
+      background: var(--danger-bg);
+      color: var(--danger);
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      margin-top: 10px;
+    }
+
+    .attachment-pill {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--blue-ice);
+      border: 1px solid var(--blue-border);
+      padding: 8px 12px;
+      border-radius: 12px;
+      margin: 10px 0;
+      font-size: 0.86rem;
+    }
+
+    .chat-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 52vh;
+      overflow-y: auto;
+      padding: 4px 0;
+    }
+
+    .bubble {
+      max-width: 86%;
+      padding: 12px 14px;
+      border-radius: 16px;
+      white-space: pre-wrap;
+      line-height: 1.48;
+      font-size: 0.94rem;
+    }
+    .bubble.user {
+      align-self: flex-end;
+      background: var(--blue-primary);
+      color: var(--white);
+      border-bottom-right-radius: 4px;
+    }
+    .bubble.model {
+      align-self: flex-start;
+      background: var(--white);
+      border: 1px solid var(--blue-border);
+      border-bottom-left-radius: 4px;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--white);
+      border-top: 1px solid var(--blue-border);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 6px;
+      z-index: 30;
+    }
+
+    .nav-item {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+    .nav-item.active {
+      background: var(--blue-container);
+      color: var(--blue-dark);
+    }
+
+    .hidden { display: none !important; }
+    .saved-item {
+      border: 1px solid var(--blue-border);
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 10px;
+      background: #fbfdff;
+    }
+    .muted { color: var(--muted); font-size: 0.84rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="brand-badge">📘</div>
+      <span>AskPaper</span>
+    </div>
+    <div class="header-actions">
+      <button class="pill-btn" id="toggleKeyBtn">🔑 API Key</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- API Key Setup Card -->
+    <section class="card hidden" id="apiKeyCard">
+      <label for="apiKeyInput">Gemini API Key (saved locally in your browser)</label>
+      <div class="row">
+        <input type="password" id="apiKeyInput" placeholder="Paste your Gemini API key (AIza...)" style="flex: 1;" />
+        <button class="btn-outline" id="saveKeyBtn">Save Key</button>
+      </div>
+      <p class="muted" style="margin: 8px 0 0;">
+        Get a free key from Google AI Studio (aistudio.google.com/apikey). Your key stays in localStorage on this device.
+      </p>
+    </section>
+
+    <!-- Tab 1: Ask & Paper Solver -->
+    <section id="tab-ask">
+      <div class="card hero">
+        <h1>Question &amp; Paper Solver</h1>
+        <p>Ask any question, upload a PDF/Doc/Photo question paper, or speak with your mic &amp; listen in AI Voice.</p>
+      </div>
+
+      <div class="chip-row" id="askModeChips">
+        <button class="chip active" data-model="gemini-2.5-flash" data-thinking="0">Balanced</button>
+        <button class="chip" data-model="gemini-2.5-flash-lite" data-thinking="0">Fast</button>
+        <button class="chip" data-model="gemini-2.5-pro" data-thinking="8192">Deep Think (High)</button>
+      </div>
+
+      <div class="card">
+        <label for="askPrompt">Your Question / Paper Instructions</label>
+        <textarea id="askPrompt" rows="4" placeholder="Type your question in English, Hindi, or Hinglish... or upload a question paper below."></textarea>
+
+        <div class="chip-row" style="margin-top: 10px;">
+          <button class="chip quick-prompt" data-text="Solve all questions in this paper step by step.">Solve all questions</button>
+          <button class="chip quick-prompt" data-text="Give concise 5-mark exam answers.">Exam-ready answers</button>
+          <button class="chip quick-prompt" data-text="Explain clearly in simple Hinglish.">Explain in Hinglish</button>
+        </div>
+
+        <div id="askAttachmentBox" class="attachment-pill hidden">
+          <span id="askAttachmentName"></span>
+          <button class="btn-outline" id="clearAskAttachmentBtn" style="padding: 4px 10px;">Remove</button>
+        </div>
+
+        <div class="row" style="margin: 10px 0 12px;">
+          <label class="btn-outline" style="margin: 0; cursor: pointer;">
+            📄 Upload Paper / Docs / Photo
+            <input type="file" id="askFileInput" accept=".pdf,.txt,.md,.csv,.html,image/*,video/*" class="hidden" />
+          </label>
+          <button class="btn-outline" id="askMicBtn">🎤 Speak Question</button>
+        </div>
+
+        <button class="btn-primary" id="solveBtn">Get Answer</button>
+        <div id="askError" class="error-box hidden"></div>
+      </div>
+
+      <div class="card hidden" id="askAnswerCard">
+        <div class="row" style="justify-content: space-between; margin-bottom: 10px;">
+          <strong style="color: var(--blue-primary);">AI Answer</strong>
+          <div class="row">
+            <select id="voiceLangSelect" style="width: auto; padding: 6px 10px; font-size: 0.82rem;">
+              <option value="en-IN">AI Voice (English/India)</option>
+              <option value="hi-IN">AI Voice (Hindi)</option>
+              <option value="en-US">AI Voice (US)</option>
+            </select>
+            <button class="btn-voice" id="askSpeakBtn">🔊 AI Voice</button>
+          </div>
+        </div>
+        <div id="askAnswerText" class="answer-box"></div>
+      </div>
+    </section>
+
+    <!-- Tab 2: Multi-Turn AI Tutor Chat -->
+    <section id="tab-chat" class="hidden">
+      <div class="card">
+        <div class="row" style="justify-content: space-between; margin-bottom: 8px;">
+          <strong style="color: var(--blue-primary);">AI Tutor Chat</strong>
+          <button class="btn-outline" id="clearChatBtn" style="padding: 6px 10px;">Clear Chat</button>
+        </div>
+        <div class="chat-list" id="chatList"></div>
+        <div class="row" style="margin-top: 10px;">
+          <input type="text" id="chatInput" placeholder="Ask a follow-up question..." style="flex: 1;" />
+          <button class="btn-outline" id="chatMicBtn">🎤</button>
+          <button class="btn-primary" id="chatSendBtn" style="width: auto; padding: 11px 16px;">Send</button>
+        </div>
+        <div id="chatError" class="error-box hidden"></div>
+      </div>
+    </section>
+
+    <!-- Tab 3: Saved Library -->
+    <section id="tab-saved" class="hidden">
+      <div class="card">
+        <div class="row" style="justify-content: space-between; margin-bottom: 10px;">
+          <strong style="color: var(--blue-primary);">Saved Questions &amp; Papers</strong>
+          <input type="text" id="searchSavedInput" placeholder="Search saved..." style="max-width: 220px; padding: 8px 12px;" />
+        </div>
+        <div id="savedList"></div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-tab="ask">✨ Ask &amp; Paper</button>
+    <button class="nav-item" data-tab="chat">💬 AI Tutor</button>
+    <button class="nav-item" data-tab="saved">🔖 Saved</button>
+  </nav>
+
+  <script>
+    const KEY_STORAGE = "askpaper_gemini_api_key";
+    const SAVED_STORAGE = "askpaper_saved_sessions";
+    const CHAT_STORAGE = "askpaper_chat_history";
+
+    let selectedModel = "gemini-2.5-flash";
+    let thinkingBudget = 0;
+    let attachedFile = null; // { name, mimeType, base64, textContent }
+    let chatHistory = JSON.parse(localStorage.getItem(CHAT_STORAGE) || "[]");
+    let savedSessions = JSON.parse(localStorage.getItem(SAVED_STORAGE) || "[]");
+    let isSpeaking = false;
+
+    const apiKeyCard = document.getElementById("apiKeyCard");
+    const apiKeyInput = document.getElementById("apiKeyInput");
+    apiKeyInput.value = localStorage.getItem(KEY_STORAGE) || "";
+    if (!apiKeyInput.value) apiKeyCard.classList.remove("hidden");
+
+    document.getElementById("toggleKeyBtn").onclick = () => apiKeyCard.classList.toggle("hidden");
+    document.getElementById("saveKeyBtn").onclick = () => {
+      localStorage.setItem(KEY_STORAGE, apiKeyInput.value.trim());
+      apiKeyCard.classList.add("hidden");
+    };
+
+    // Tabs
+    document.querySelectorAll(".nav-item").forEach((btn) => {
+      btn.onclick = () => {
+        const target = btn.dataset.tab;
+        document.querySelectorAll(".nav-item").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        ["ask", "chat", "saved"].forEach((id) => {
+          document.getElementById("tab-" + id).classList.toggle("hidden", id !== target);
+        });
+        if (target === "saved") renderSaved();
+        if (target === "chat") renderChat();
+      };
+    });
+
+    // Mode Chips
+    document.querySelectorAll("#askModeChips .chip").forEach((chip) => {
+      chip.onclick = () => {
+        document.querySelectorAll("#askModeChips .chip").forEach((c) => c.classList.remove("active"));
+        chip.classList.add("active");
+        selectedModel = chip.dataset.model;
+        thinkingBudget = parseInt(chip.dataset.thinking || "0", 10);
+      };
+    });
+
+    // Quick prompt chips
+    document.querySelectorAll(".quick-prompt").forEach((chip) => {
+      chip.onclick = () => {
+        document.getElementById("askPrompt").value = chip.dataset.text;
+      };
+    });
+
+    // File Upload (PDF / Text Docs / Photos / Short Video)
+    document.getElementById("askFileInput").onchange = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const errEl = document.getElementById("askError");
+      errEl.classList.add("hidden");
+      if (file.size > 18 * 1024 * 1024) {
+        errEl.textContent = "File is larger than 18 MB. Please upload a smaller file.";
+        errEl.classList.remove("hidden");
+        return;
+      }
+
+      const mime = file.type || (file.name.endsWith(".pdf") ? "application/pdf" : "text/plain");
+      if (mime.startsWith("text/") || file.name.endsWith(".md") || file.name.endsWith(".csv")) {
+        const textContent = await file.text();
+        attachedFile = { name: file.name, mimeType: "text/plain", textContent };
+      } else {
+        const base64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result).split(",")[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+        attachedFile = { name: file.name, mimeType: mime, base64 };
+      }
+      document.getElementById("askAttachmentName").textContent = "📎 " + file.name;
+      document.getElementById("askAttachmentBox").classList.remove("hidden");
+    };
+
+    document.getElementById("clearAskAttachmentBtn").onclick = () => {
+      attachedFile = null;
+      document.getElementById("askFileInput").value = "";
+      document.getElementById("askAttachmentBox").classList.add("hidden");
+    };
+
+    async function callGemini(model, contents, systemText, thinking = 0) {
+      const key = (localStorage.getItem(KEY_STORAGE) || "").trim();
+      if (!key) {
+        apiKeyCard.classList.remove("hidden");
+        throw new Error("Please enter and save your Gemini API key first.");
+      }
+      const body = {
+        contents,
+        systemInstruction: { parts: [{ text: systemText }] },
+      };
+      if (thinking > 0) {
+        body.generationConfig = { thinkingConfig: { thinkingBudget: thinking } };
+      }
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        }
+      );
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data?.error?.message || "Gemini API error (" + res.status + ")");
+      }
+      const text = data?.candidates?.[0]?.content?.parts?.map((p) => p.text || "").join("") || "";
+      if (!text.trim()) throw new Error("Model returned an empty answer.");
+      return text;
+    }
+
+    // Solve Question / Paper
+    document.getElementById("solveBtn").onclick = async () => {
+      const prompt = document.getElementById("askPrompt").value.trim();
+      const errEl = document.getElementById("askError");
+      const btn = document.getElementById("solveBtn");
+      errEl.classList.add("hidden");
+
+      if (!prompt && !attachedFile) {
+        errEl.textContent = "Please type a question or upload a question paper.";
+        errEl.classList.remove("hidden");
+        return;
+      }
+
+      const parts = [];
+      if (attachedFile) {
+        if (attachedFile.textContent) {
+          parts.push({ text: `Uploaded document (${attachedFile.name}):\n${attachedFile.textContent}` });
+        } else if (attachedFile.base64) {
+          parts.push({ inline_data: { mime_type: attachedFile.mimeType, data: attachedFile.base64 } });
+        }
+      }
+      parts.push({
+        text: prompt || `Analyze this uploaded question paper (${attachedFile.name}) and solve every question clearly step by step.`,
+      });
+
+      btn.disabled = true;
+      btn.textContent = "Solving...";
+      try {
+        const answer = await callGemini(
+          selectedModel,
+          [{ role: "user", parts }],
+          "You are AskPaper, an expert academic tutor and question paper solver. Reply clearly in the user's language (English, Hindi, or Hinglish) with step-by-step answers.",
+          thinkingBudget
+        );
+        document.getElementById("askAnswerText").textContent = answer;
+        document.getElementById("askAnswerCard").classList.remove("hidden");
+
+        savedSessions.unshift({
+          id: String(Date.now()),
+          title: attachedFile ? attachedFile.name : prompt.slice(0, 70),
+          prompt: prompt || "Solve uploaded paper: " + attachedFile.name,
+          answer,
+          model: selectedModel,
+          createdAt: new Date().toLocaleString(),
+        });
+        localStorage.setItem(SAVED_STORAGE, JSON.stringify(savedSessions.slice(0, 50)));
+      } catch (e) {
+        errEl.textContent = e.message;
+        errEl.classList.remove("hidden");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Get Answer";
+      }
+    };
+
+    // AI Voice (Web Speech Synthesis)
+    function toggleSpeak(text, buttonEl) {
+      if (!("speechSynthesis" in window)) {
+        alert("Speech synthesis is not supported in this browser.");
+        return;
+      }
+      if (isSpeaking) {
+        window.speechSynthesis.cancel();
+        isSpeaking = false;
+        buttonEl.textContent = "🔊 AI Voice";
+        buttonEl.classList.remove("playing");
+        return;
+      }
+      const clean = text.replace(/[#*`]+/g, "").trim();
+      if (!clean) return;
+      const utter = new SpeechSynthesisUtterance(clean);
+      utter.lang = document.getElementById("voiceLangSelect").value;
+      utter.rate = 1.0;
+      utter.onend = () => {
+        isSpeaking = false;
+        buttonEl.textContent = "🔊 AI Voice";
+        buttonEl.classList.remove("playing");
+      };
+      utter.onerror = () => {
+        isSpeaking = false;
+        buttonEl.textContent = "🔊 AI Voice";
+        buttonEl.classList.remove("playing");
+      };
+      isSpeaking = true;
+      buttonEl.textContent = "⏹ Stop Voice";
+      buttonEl.classList.add("playing");
+      window.speechSynthesis.speak(utter);
+    }
+
+    document.getElementById("askSpeakBtn").onclick = () => {
+      toggleSpeak(document.getElementById("askAnswerText").textContent, document.getElementById("askSpeakBtn"));
+    };
+
+    // Voice Microphone Dictation
+    function startDictation(targetInput, btnEl) {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR) {
+        alert("Voice dictation requires Chrome or Edge browser with microphone access.");
+        return;
+      }
+      const rec = new SR();
+      rec.lang = document.getElementById("voiceLangSelect").value || "en-IN";
+      rec.interimResults = false;
+      const origText = btnEl.textContent;
+      btnEl.textContent = "Listening...";
+      rec.onresult = (ev) => {
+        const transcript = ev.results[0][0].transcript;
+        targetInput.value = (targetInput.value ? targetInput.value + " " : "") + transcript;
+      };
+      rec.onend = () => { btnEl.textContent = origText; };
+      rec.onerror = () => { btnEl.textContent = origText; };
+      rec.start();
+    }
+
+    document.getElementById("askMicBtn").onclick = () =>
+      startDictation(document.getElementById("askPrompt"), document.getElementById("askMicBtn"));
+    document.getElementById("chatMicBtn").onclick = () =>
+      startDictation(document.getElementById("chatInput"), document.getElementById("chatMicBtn"));
+
+    // Multi-turn Chat
+    function renderChat() {
+      const list = document.getElementById("chatList");
+      list.innerHTML = "";
+      if (!chatHistory.length) {
+        list.innerHTML = `<p class="muted" style="text-align:center;">Ask any follow-up study question to start chatting.</p>`;
+        return;
+      }
+      chatHistory.forEach((m) => {
+        const div = document.createElement("div");
+        div.className = "bubble " + m.role;
+        div.textContent = m.text;
+        if (m.role === "model") {
+          const br = document.createElement("div");
+          br.style.marginTop = "6px";
+          const vBtn = document.createElement("button");
+          vBtn.className = "btn-voice";
+          vBtn.textContent = "🔊 AI Voice";
+          vBtn.onclick = () => toggleSpeak(m.text, vBtn);
+          br.appendChild(vBtn);
+          div.appendChild(br);
+        }
+        list.appendChild(div);
+      });
+      list.scrollTop = list.scrollHeight;
+    }
+
+    document.getElementById("chatSendBtn").onclick = async () => {
+      const input = document.getElementById("chatInput");
+      const errEl = document.getElementById("chatError");
+      const text = input.value.trim();
+      if (!text) return;
+      errEl.classList.add("hidden");
+      input.value = "";
+      chatHistory.push({ role: "user", text });
+      renderChat();
+
+      try {
+        const contents = chatHistory.slice(-14).map((m) => ({
+          role: m.role,
+          parts: [{ text: m.text }],
+        }));
+        const reply = await callGemini(
+          selectedModel,
+          contents,
+          "You are AskPaper Tutor, a friendly academic tutor. Reply clearly in the user's language (English, Hindi, or Hinglish).",
+          thinkingBudget
+        );
+        chatHistory.push({ role: "model", text: reply });
+        localStorage.setItem(CHAT_STORAGE, JSON.stringify(chatHistory.slice(-30)));
+        renderChat();
+      } catch (e) {
+        errEl.textContent = e.message;
+        errEl.classList.remove("hidden");
+      }
+    };
+
+    document.getElementById("clearChatBtn").onclick = () => {
+      chatHistory = [];
+      localStorage.removeItem(CHAT_STORAGE);
+      renderChat();
+    };
+
+    // Saved Library
+    function renderSaved() {
+      const container = document.getElementById("savedList");
+      const q = document.getElementById("searchSavedInput").value.trim().toLowerCase();
+      const filtered = savedSessions.filter(
+        (s) => !q || s.title.toLowerCase().includes(q) || s.answer.toLowerCase().includes(q)
+      );
+      container.innerHTML = "";
+      if (!filtered.length) {
+        container.innerHTML = `<p class="muted">No saved answers yet. Solve a question or paper in the Ask tab!</p>`;
+        return;
+      }
+      filtered.forEach((s) => {
+        const el = document.createElement("div");
+        el.className = "saved-item";
+        el.innerHTML = `
+          <div style="display:flex; justify-content:space-between; gap:8px; align-items:center;">
+            <strong>${escapeHtml(s.title)}</strong>
+            <span class="muted">${escapeHtml(s.model)}</span>
+          </div>
+          <p class="muted" style="margin:6px 0;">${escapeHtml(s.createdAt)}</p>
+          <div class="answer-box" style="margin-bottom:8px;">${escapeHtml(s.answer)}</div>
+        `;
+        const row = document.createElement("div");
+        row.className = "row";
+        const speakBtn = document.createElement("button");
+        speakBtn.className = "btn-voice";
+        speakBtn.textContent = "🔊 AI Voice";
+        speakBtn.onclick = () => toggleSpeak(s.answer, speakBtn);
+        const delBtn = document.createElement("button");
+        delBtn.className = "btn-outline";
+        delBtn.textContent = "Delete";
+        delBtn.onclick = () => {
+          savedSessions = savedSessions.filter((item) => item.id !== s.id);
+          localStorage.setItem(SAVED_STORAGE, JSON.stringify(savedSessions));
+          renderSaved();
+        };
+        row.append(speakBtn, delBtn);
+        el.appendChild(row);
+        container.appendChild(el);
+      });
+    }
+
+    document.getElementById("searchSavedInput").oninput = renderSaved;
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+  </script>
+</body>
+</html>

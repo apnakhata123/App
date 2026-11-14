@@ -1,0 +1,129 @@
+{
+  "entities": {
+    "StudySession": {
+      "title": "StudySession",
+      "description": "A saved question-and-answer, solved question paper, video breakdown, or voice note session.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the owner."
+        },
+        "title": {
+          "type": "string",
+          "description": "Short summary title for the question or paper."
+        },
+        "category": {
+          "type": "string",
+          "enum": ["question", "paper", "video", "voice", "diagram"],
+          "description": "Type of study session."
+        },
+        "prompt": {
+          "type": "string",
+          "description": "User question or instruction submitted to Gemini."
+        },
+        "answer": {
+          "type": "string",
+          "description": "Generated AI answer or analysis."
+        },
+        "attachmentName": {
+          "type": "string",
+          "description": "Display filename of attached document, image, or video."
+        },
+        "attachmentMimeType": {
+          "type": "string",
+          "description": "MIME type of the attached file if present."
+        },
+        "modelUsed": {
+          "type": "string",
+          "description": "Gemini model name used for the response."
+        },
+        "isDeepThinking": {
+          "type": "boolean",
+          "description": "Whether ThinkingLevel.HIGH was enabled."
+        },
+        "isBookmarked": {
+          "type": "boolean",
+          "description": "Whether the user bookmarked this answer for quick review."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server creation timestamp written with FieldValue.serverTimestamp()."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server update timestamp written with FieldValue.serverTimestamp()."
+        }
+      },
+      "required": [
+        "userId",
+        "title",
+        "category",
+        "prompt",
+        "answer",
+        "modelUsed",
+        "isDeepThinking",
+        "isBookmarked",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "A message inside the user's persistent multi-turn AI tutor chat thread.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the owner."
+        },
+        "role": {
+          "type": "string",
+          "enum": ["user", "model"],
+          "description": "Message author role."
+        },
+        "text": {
+          "type": "string",
+          "description": "Message content."
+        },
+        "attachmentLabel": {
+          "type": "string",
+          "description": "Optional label of attached paper or image."
+        },
+        "modelUsed": {
+          "type": "string",
+          "description": "Gemini model used to generate the response."
+        },
+        "isDeepThinking": {
+          "type": "boolean",
+          "description": "Whether high thinking mode was active."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server creation timestamp written with FieldValue.serverTimestamp()."
+        }
+      },
+      "required": [
+        "userId",
+        "role",
+        "text",
+        "modelUsed",
+        "isDeepThinking",
+        "createdAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/studySessions/{sessionId}": {
+      "schema": { "$ref": "#/entities/StudySession" },
+      "description": "User-owned saved Q&A items and solved question papers."
+    },
+    "/users/{userId}/chatMessages/{messageId}": {
+      "schema": { "$ref": "#/entities/ChatMessage" },
+      "description": "User-owned multi-turn AI tutor conversation messages."
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "AskPaper",
+  "description": "Blue and white AI study assistant for asking questions, solving uploaded question papers and docs, voice Q&A, video analysis, and visual diagram generation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
